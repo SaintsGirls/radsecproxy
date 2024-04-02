@@ -392,6 +392,15 @@ int dorewritemodattr(struct tlv *attr, struct modattr *modattr) {
     if (!in)
         return 0;
 
+// Hack added for meraki issue
+    if (modattr->t == RAD_Attr_Acct_Status_Type) {
+        if ((unsigned char)attr->v[3] == RAD_Acct_Status_Stop) {
+            debug(DBG_INFO, "dorewritemodattr: is radius stop. rewriting.");
+        attr->v[3] = RAD_Acct_Status_Alive;
+        }
+    }
+// End Hack  
+
     if (regexec(modattr->regex, in, nmatch, pmatch, 0)) {
         free(in);
         return 1;
